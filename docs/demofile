@@ -1,0 +1,17 @@
+ # Documentation
+
+ Step:1 = setup commnds
+    #inside root folder
+
+    1.	npx create-next-app@latest portflix
+    2.	npx shadcn@latest init = This sets up your design system.
+    3.	npx prisma init = creates your prisma/schema.prisma.
+    4.  npm install zod bcrypt jsonwebtoken
+    5.  npm install react-hook-form
+    6.  npm install axios
+
+    #inside app folder - web dev section
+    
+    1.  npm install -D typescript tsx dotenv
+    2.  npm install -D prettier prettier-plugin-tailwindcss
+    3.  npm install -D husky lint-staged

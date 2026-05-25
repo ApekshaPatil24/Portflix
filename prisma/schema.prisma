@@ -3,29 +3,67 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
-model User {
-  id        String    @id @default(cuid())
-  email     String    @unique
-  username  String    @unique
-  name      String?
-  createdAt DateTime  @default(now())
+// ─── ENUMS ──────────────────────────────────────
 
-  projects  Project[]
+enum Plan {
+  FREE
+  PRO
 }
+
+// ─── USER ───────────────────────────────────────
+// Created once in /api/user/onboard on first login
+
+model User {
+  id                String    @id @default(cuid())
+  supabaseId        String    @unique   // links to Supabase auth.users
+  email             String    @unique
+  username          String    @unique   // portrix.io/username
+  name              String?             // from GitHub profile
+  avatarUrl         String?
+  tagline           String?
+  bio               String?
+  location          String?
+  skills            String[]
+  available         Boolean   @default(true)
+  plan              Plan      @default(FREE)
+
+  // Social links
+  githubUrl         String?
+  linkedinUrl       String?
+  twitterUrl        String?
+  websiteUrl        String?
+
+  // GitHub integration
+  githubUsername    String?
+  githubAccessToken String?   // stored encrypted
+
+  // Relations
+  projects          Project[]
+
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([username])
+  @@index([supabaseId])
+}
+
+// ─── PROJECT ────────────────────────────────────
+// Placeholder — full model added in Phase 2
 
 model Project {
   id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   title       String
   description String
   techStack   String[]
-
-  userId      String
-  user        User @relation(fields: [userId], references: [id])
-
   createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
 }

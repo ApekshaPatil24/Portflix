@@ -1,0 +1,18 @@
+export const SUGGESTED_SKILLS = [
+  "React",
+  "Next.js",
+  "Node.js",
+  "TypeScript",
+  "Python",
+  "DSA",
+  "SQL",
+  "MongoDB",
+  "AWS",
+  "Docker",
+  "Figma",
+  "Java",
+  "C++",
+  "Machine Learning",
+  "Flutter",
+  "Go",
+]

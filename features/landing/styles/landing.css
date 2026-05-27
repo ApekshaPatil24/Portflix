@@ -1,0 +1,398 @@
+/* HERO SECTION CSS */
+.hero-orbit {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform:
+    translate(-50%, -50%);
+  width: 700px;
+  height: 700px;
+  border:
+    1px solid rgba(0, 229, 255, 0.08);
+  border-radius: 9999px;
+  animation:
+    orbit-spin 20s linear infinite;
+  pointer-events: none;
+}
+
+.hero-orbit::before {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: #00e5ff;
+  box-shadow:
+    0 0 16px #00e5ff,
+    0 0 32px #00e5ff;
+}
+
+.hero-orbit2 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform:
+    translate(-50%, -50%);
+  width: 500px;
+  height: 500px;
+  border:
+    1px solid rgba(167, 139, 250, 0.1);
+  border-radius: 9999px;
+  animation:
+    orbit-spin 14s linear infinite reverse;
+  pointer-events: none;
+}
+
+.hero-orbit2::before {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 30%;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: #a78bfa;
+  box-shadow:
+    0 0 12px #a78bfa,
+    0 0 24px #a78bfa;
+}
+
+@keyframes orbit-spin {
+  from {
+    transform:
+      translate(-50%, -50%)
+      rotate(0deg);
+  }
+
+  to {
+    transform:
+      translate(-50%, -50%)
+      rotate(360deg);
+  }
+}
+
+.fade-up {
+  animation:
+    fadeUp 0.7s ease both;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.particle {
+  position: fixed;
+  border-radius: 9999px;
+  pointer-events: none;
+  z-index: 0;
+  animation:
+    particleDrift linear infinite;
+}
+
+@keyframes particleDrift {
+  0% {
+    transform:
+      translateY(100vh)
+      rotate(0deg);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  90% {
+    opacity: 0.5;
+  }
+
+  100% {
+    transform:
+      translateY(-100px)
+      rotate(720deg);
+    opacity: 0;
+  }
+}
+/*Hero card css starts*/
+.hero-float {
+  animation:
+    heroFloat 7s ease-in-out infinite;
+}
+
+@keyframes heroFloat {
+  0% {
+    transform:
+      translateY(0px)
+      rotateX(8deg)
+      rotateY(-2deg);
+  }
+
+  50% {
+    transform:
+      translateY(-10px)
+      rotateX(6deg)
+      rotateY(-1deg);
+  }
+
+  100% {
+    transform:
+      translateY(0px)
+      rotateX(8deg)
+      rotateY(-2deg);
+  }
+}
+/* arrow css */
+.github-flow-line {
+  position: absolute;
+  left: -20%;
+  top: 50%;
+
+  width: 140%;
+  height: 2px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(34,211,238,0.8),
+      transparent
+    );
+
+  filter: blur(1px);
+
+  animation:
+    githubFlow 4s linear infinite;
+}
+
+@keyframes githubFlow {
+  0% {
+    transform:
+      translateX(-10%);
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  100% {
+    transform:
+      translateX(20%);
+    opacity: 0;
+  }
+}
+.scanlines::before {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      transparent,
+      transparent 3px,
+      rgba(255,255,255,0.015) 4px
+    );
+
+  pointer-events: none;
+
+  opacity: 0.4;
+}
+
+/* =========================
+   FEATURES SECTION
+========================= */
+
+.feature-card {
+  position: relative;
+
+  overflow: hidden;
+
+  background:
+    rgba(255,255,255,0.025);
+
+  border:
+    1px solid rgba(255,255,255,0.07);
+
+  transition:
+    transform 0.35s ease,
+    border-color 0.35s ease,
+    box-shadow 0.35s ease;
+
+  backdrop-filter: blur(10px);
+}
+
+.feature-card::after {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  opacity: 0;
+
+  transition:
+    opacity 0.35s ease;
+}
+
+.feature-card:hover {
+  transform:
+    translateY(-6px)
+    scale(1.01);
+}
+
+.feature-card:hover::after {
+  opacity: 1;
+}
+
+/* CYAN */
+
+.feature-cyan::after {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(0,229,255,0.05),
+      transparent
+    );
+}
+
+.feature-cyan:hover {
+  border-color:
+    rgba(0,229,255,0.18);
+
+  box-shadow:
+    0 24px 60px rgba(0,0,0,0.5),
+    0 0 60px rgba(0,229,255,0.08);
+}
+
+/* PINK */
+
+.feature-pink::after {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(244,114,182,0.05),
+      transparent
+    );
+}
+
+.feature-pink:hover {
+  border-color:
+    rgba(244,114,182,0.18);
+
+  box-shadow:
+    0 24px 60px rgba(0,0,0,0.5),
+    0 0 60px rgba(244,114,182,0.08);
+}
+
+/* PURPLE */
+
+.feature-purple::after {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(167,139,250,0.05),
+      transparent
+    );
+}
+
+.feature-purple:hover {
+  border-color:
+    rgba(167,139,250,0.18);
+
+  box-shadow:
+    0 24px 60px rgba(0,0,0,0.5),
+    0 0 60px rgba(167,139,250,0.08);
+}
+
+/* GLOW */
+
+.feature-glow {
+  position: absolute;
+
+  width: 180px;
+  height: 180px;
+
+  border-radius: 9999px;
+
+  filter: blur(80px);
+
+  opacity: 0.12;
+
+  pointer-events: none;
+}
+
+/* TERMINAL */
+
+.ai-terminal {
+  background:
+    rgba(0,0,0,0.5);
+
+  border:
+    1px solid rgba(255,255,255,0.08);
+
+  border-radius: 16px;
+
+  padding: 14px;
+
+  margin-top: 22px;
+
+  font-family: var(--font-mono);
+
+  font-size: 11px;
+}
+
+.t-line {
+  display: flex;
+
+  gap: 8px;
+
+  margin-bottom: 6px;
+
+  line-height: 1.5;
+}
+
+.t-prompt {
+  color: #00e5ff;
+}
+
+.t-cmd {
+  color: white;
+}
+
+.t-out {
+  color: rgba(255,255,255,0.62);
+}
+
+.t-cursor {
+  display: inline-block;
+
+  width: 7px;
+  height: 11px;
+
+  background: #00e5ff;
+
+  margin-left: 2px;
+
+  animation:
+    blink 1s infinite;
+}
+
+@keyframes blink {
+  0%,100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+}

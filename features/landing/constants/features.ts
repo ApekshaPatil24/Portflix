@@ -55,12 +55,14 @@ export const FEATURES = [
     icon: Wand2,
   },
   {
-    id: 6,
-    title: "Premium Templates",
-    description:
-      "Beautiful portfolio templates designed for modern developers and engineers.",
-    tag: "50+ templates",
-    variant: "purple",
-    icon: LayoutTemplate,
-  },
+  id: 6,
+  title: "Premium Templates",
+  description:
+    "Beautiful portfolio templates designed for modern developers and engineers.",
+  tag: "50+ templates",
+  variant: "purple",
+  icon: LayoutTemplate,
+  wide: true,
+  showTerminal: false,
+},
 ]

@@ -7,7 +7,7 @@ export default function FeatureGrid() {
       className="
         grid
         grid-cols-1
-        md:grid-cols-3
+        lg:grid-cols-3
         gap-3
       "
     >
@@ -20,6 +20,8 @@ export default function FeatureGrid() {
           icon={feature.icon}
           variant={feature.variant as any}
           large={feature.large}
+          showTerminal={feature.showTerminal}
+          wide={feature.wide}
         />
       ))}
     </div>

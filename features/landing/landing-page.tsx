@@ -5,6 +5,7 @@ import Navbar from "./sections/navbar/navbar"
 import HeroSection from "./sections/hero/hero-section"
 import SignalSection from "./sections/signals/signal-section"
 import FeaturesSection from "./sections/features/features-section"
+import StackMarquee from "./sections/stack-marquee/stack-marquee"
 
 // import StatsSection from "./sections/stats/stats-section"
 
@@ -31,6 +32,9 @@ export default function LandingPage() {
       {/* <StatsSection /> */}
 
       <FeaturesSection />
+
+      <StackMarquee />
+      
     </main>
   )
 }

@@ -1,4 +1,5 @@
 import FeatureIcon from "./feature-icon"
+import TemplateSlider from "./template-slider"
 
 type Props = {
   title: string
@@ -7,6 +8,8 @@ type Props = {
   icon: any
   variant: "cyan" | "pink" | "purple"
   large?: boolean
+  showTerminal?: boolean
+  wide?: boolean
 }
 
 export default function FeatureCard({
@@ -16,6 +19,8 @@ export default function FeatureCard({
   icon,
   variant,
   large,
+  showTerminal,
+  wide,
 }: Props) {
   return (
     <div
@@ -34,7 +39,8 @@ export default function FeatureCard({
         p-5
         md:p-6
 
-        ${large ? "md:col-span-2" : ""}
+        ${large ? "lg:col-span-2" : ""}
+        ${wide ? "lg:col-span-3" : ""}
       `}
     >
       {/* GLOW */}
@@ -117,7 +123,7 @@ export default function FeatureCard({
         </div>
 
         {/* TERMINAL */}
-        {large && (
+        {showTerminal && (
           <div className="ai-terminal">
             <div className="t-line">
               <span className="t-prompt">$</span>
@@ -146,6 +152,9 @@ export default function FeatureCard({
               </span>
             </div>
           </div>
+        )}
+        {title === "Premium Templates" && (
+          <TemplateSlider />
         )}
       </div>
     </div>

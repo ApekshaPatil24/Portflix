@@ -36,9 +36,9 @@ export default function LandingPage() {
 
       <FeaturesSection />
 
-      <StackMarquee />
-
       <RecruiterSection />
+
+      <StackMarquee />
 
       <CtaSection />
       

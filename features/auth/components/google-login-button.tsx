@@ -1,6 +1,5 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
 import { createClient } from "@/lib/supabase/client"
 
 export default function GoogleLoginButton() {
@@ -10,18 +9,53 @@ export default function GoogleLoginButton() {
     await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/api/auth/callback`,
+        redirectTo:
+  typeof window !== "undefined"
+    ? `${window.location.origin}/api/auth/callback`
+    : undefined,
       },
     })
   }
 
   return (
-    <Button
+    <button
       onClick={handleLogin}
-      variant="outline"
-      className="w-full h-14 rounded-2xl border-white/10 bg-white/5 hover:bg-white/10 text-white text-base font-semibold"
+      className="
+        flex
+        w-full
+        items-center
+        justify-center
+        gap-3
+        cursor-pointer
+        rounded-[18px]
+
+        border
+        border-white/[0.08]
+
+        bg-white/[0.03]
+
+        py-4
+
+        text-[13px]
+        font-semibold
+
+        text-white
+
+        transition-all
+        duration-200
+
+        hover:bg-white/[0.05]
+
+        active:scale-[0.98]
+      "
     >
+      <img
+        src="https://www.svgrepo.com/show/475656/google-color.svg"
+        alt="Google"
+        className="h-5 w-5 opacity-80"
+      />
+
       Continue with Google
-    </Button>
+    </button>
   )
 }

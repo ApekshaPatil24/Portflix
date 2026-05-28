@@ -1,8 +1,7 @@
 "use client"
 
-import { Globe } from "lucide-react"
+import { Code2 } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
 import { createClient } from "@/lib/supabase/client"
 
 export default function GitHubLoginButton() {
@@ -12,19 +11,52 @@ export default function GitHubLoginButton() {
     await supabase.auth.signInWithOAuth({
       provider: "github",
       options: {
-        redirectTo: `${window.location.origin}/api/auth/callback`,
+        redirectTo:
+  typeof window !== "undefined"
+    ? `${window.location.origin}/api/auth/callback`
+    : undefined,
         scopes: "read:user user:email",
       },
     })
   }
 
   return (
-    <Button
+    <button
       onClick={handleLogin}
-      className="w-full h-14 rounded-2xl bg-white text-black hover:bg-zinc-200 text-base font-semibold"
+      className="
+  flex
+  w-full
+  items-center
+  justify-center
+  gap-3
+  
+  rounded-[18px]
+
+  border
+  border-white/[0.08]
+
+  bg-white/[0.03]
+
+  py-4
+
+  text-[13px]
+  font-semibold
+
+  text-white
+
+  cursor-pointer
+
+  transition-all
+  duration-200
+
+  hover:bg-white/[0.05]
+  
+  active:scale-[0.98]
+"
     >
-      <Globe className="w-5 h-5 mr-3" />
+      <Code2 className="h-5 w-5 text-white/70" />
+
       Continue with GitHub
-    </Button>
+    </button>
   )
 }

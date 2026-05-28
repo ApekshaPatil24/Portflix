@@ -495,3 +495,40 @@
       translateX(-50%);
   }
 }
+
+/* AUTH TYPEWRITER */
+
+.auth-typewriter {
+  display: inline-block;
+  pointer-events: none;
+  overflow: hidden;
+
+  white-space: nowrap;
+
+  width: 34ch;
+
+  border-right:
+    1px solid rgba(103, 232, 249, 0.7);
+
+  animation:
+    typingAuth 3s steps(34, end),
+    blinkCursor 0.8s step-end infinite;
+
+  animation-fill-mode: forwards;
+}
+
+@keyframes typingAuth {
+  from {
+    width: 0;
+  }
+
+  to {
+    width: 34ch;
+  }
+}
+
+@keyframes blinkCursor {
+  50% {
+    border-color: transparent;
+  }
+}

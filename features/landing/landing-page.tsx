@@ -6,6 +6,9 @@ import HeroSection from "./sections/hero/hero-section"
 import SignalSection from "./sections/signals/signal-section"
 import FeaturesSection from "./sections/features/features-section"
 import StackMarquee from "./sections/stack-marquee/stack-marquee"
+import RecruiterSection from "./sections/recruiter/recruiter-section"
+import CtaSection from "./sections/cta/cta-section"
+import FooterSection from "./sections/footer/footer-section"
 
 // import StatsSection from "./sections/stats/stats-section"
 
@@ -34,6 +37,12 @@ export default function LandingPage() {
       <FeaturesSection />
 
       <StackMarquee />
+
+      <RecruiterSection />
+
+      <CtaSection />
+      
+      <FooterSection />
       
     </main>
   )

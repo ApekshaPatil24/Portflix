@@ -13,7 +13,7 @@ import { SUGGESTED_SKILLS } from "./constants/skills"
 import OnboardingVisual from "./components/onboarding-visual"
 import ProtocolRail from "./components/protocol-rail"
 
-
+import "@/features/auth/styles/auth.css"
 
 export default function OnboardingForm() {
   const router = useRouter()
@@ -50,10 +50,12 @@ export default function OnboardingForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (skills.length === 0) {
-      setError("Select at least one skill")
-      return
-    }
+    if (skills.length < 2) {
+      setError(
+        "Select at least 2 skills"
+      )
+    return
+  }
 
     try {
       setLoading(true)
@@ -62,7 +64,11 @@ export default function OnboardingForm() {
       const response = await fetch("/api/user/onboard", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, tagline, skills }),
+        body: JSON.stringify({
+          username,
+          tagline: tagline.trim() || undefined,
+          skills,
+        }),
       })
 
       if (!response.ok) {
@@ -93,26 +99,125 @@ export default function OnboardingForm() {
 
         <div className="relative z-10 w-full max-w-md">
 
-          {/* Header */}
-          <div className="space-y-4 mb-10">
+        {/* Header */}
+<div className="space-y-4 mb-8">
 
-            <div className="inline-flex items-center px-3 py-1 rounded-full border border-cyan-400/20 bg-cyan-400/5">
-              <span className="text-[11px] font-mono tracking-[0.2em] text-cyan-400 uppercase">
-                Step 01 : Protocol
-              </span>
-            </div>
+  <div className="inline-flex items-center px-3 py-1 rounded-full border border-cyan-400/20 bg-cyan-400/5">
+    <span className="text-[11px] font-mono tracking-[0.2em] text-cyan-400 uppercase">
+      {step === 1
+        ? "Step 01 : Protocol"
+        : "Step 02 : Expertise"}
+    </span>
+  </div>
 
-            <h1 className="text-5xl lg:text-[68px] font-bold leading-[0.95] tracking-[-0.04em] text-white">
-              Portlix Identity
-            </h1>
+  {step === 1 ? (
+    <>
+      <div className="relative mb-4">
 
-            <p className="text-white/45 text-lg leading-relaxed max-w-lg">
-              Define your permanent namespace.
-              This is how developers discover your work.
-            </p>
+        <span
+          className="
+            absolute
+            -top-1
+            left-0
+            text-[78px]
+            font-black
+            uppercase
+            tracking-[-0.06em]
+            text-white/[0.09]
+            select-none
+            pointer-events-none
+            leading-none
+          "
+        >
+          CLAIM YOUR
+        </span>
 
-          </div>
+        <h1
+          className="
+            relative
+            z-10
+            pt-10
+            -top-3
+            left-28
+            text-[44px]
+            tracking-[-0.08em]
+            leading-none
+          "
+        >
+          <span className="font-bold text-white">
+            Name
+          </span>
 
+          <span className="font-extralight text-white/80">
+            space
+          </span>
+        </h1>
+
+      </div>
+
+      <p className="max-w-sm text-[15px] leading-8 text-white/40">
+        Reserve your permanent developer identity and
+        create a public namespace for your work.
+      </p>
+    </>
+  ) : (
+    <>
+      
+           <div className="relative mb-4">
+
+  {/* Background Word */}
+  <span
+    className="
+      absolute
+      -top-1
+      left-0
+      text-[78px]
+      font-black
+      uppercase
+      tracking-[-0.06em]
+      text-white/[0.09]
+      select-none
+      pointer-events-none
+      leading-none
+    "
+  >
+    CLAIM YOUR
+  </span>
+
+  {/* Main Word */}
+  <h1
+  className="
+    relative
+    z-10
+    pt-10
+    -top-3
+    left-28
+    text-[44px]
+    tracking-[-0.08em]
+    leading-none
+  "
+>
+  <span className="font-bold text-white">
+    Name
+  </span>
+
+  <span className="font-extralight text-white/80">
+    space
+  </span>
+</h1>
+
+</div>
+
+      <p className="max-w-sm text-[15px] leading-8 text-white/40">
+        Select the technologies that define your
+        expertise and shape your developer identity.
+      </p>
+    </>
+  )}
+
+</div>
+
+         
           {/* Progress */}
           <div className="flex gap-2 mb-10">
 
@@ -152,7 +257,8 @@ export default function OnboardingForm() {
                   }
                   className="
                     w-full
-                    py-5
+                    h-[58px]
+                    text-[14px]
                     rounded-xl
                     bg-cyan-400/90
                     text-[#050816]
@@ -161,6 +267,7 @@ export default function OnboardingForm() {
                     tracking-widest
                     hover:shadow-[0_0_35px_rgba(34,211,238,0.25)]
                     transition-all
+                    cursor-pointer
                   "
                 >
                   Initialize Protocol →
@@ -196,28 +303,73 @@ export default function OnboardingForm() {
               <>
                 <div className="space-y-3">
 
-                  <label className="text-xs uppercase tracking-widest text-white/40">
-                    Tagline
-                  </label>
+                <div
+  className="
+    p-5
+    rounded-2xl
+    border
+    border-cyan-400/10
+    bg-white/[0.03]
+    backdrop-blur-xl
+  "
+>
+  <div className="flex items-center justify-between">
 
-                  <input
-                    value={tagline}
-                    onChange={(e) => setTagline(e.target.value)}
-                    placeholder="Full-stack developer"
-                    className="
-                      w-full
-                      bg-white/5
-                      border border-white/10
-                      rounded-xl
-                      px-4
-                      py-4
-                      text-white
-                      focus:outline-none
-                      focus:border-cyan-400/40
-                    "
-                  />
+    <div>
+      <p className="text-white font-medium">
+        @{username}
+      </p>
+
+      <p className="text-white/40 text-sm mt-1">
+        {tagline || "Your developer identity"}
+      </p>
+    </div>
+
+    <div
+      className="
+        h-3
+        w-3
+        rounded-full
+        bg-cyan-400
+        shadow-[0_0_15px_rgba(34,211,238,0.8)]
+      "
+    />
+  </div>
+
+</div>
+
+                  <label className="text-xs uppercase tracking-widest text-white/40">
+      Tagline
+    </label>
+
+    <span className="text-xs text-white/25">
+      {tagline.length}/100
+    </span>
+                   <input
+    value={tagline}
+    onChange={(e) =>
+      setTagline(e.target.value)
+    }
+    maxLength={100}
+    placeholder="Full Stack Developer • Building AI Products"
+    className="
+      w-full
+      h-[60px]
+      rounded-2xl
+      bg-white/[0.03]
+      border
+      border-white/10
+      px-5
+      text-white
+      focus:outline-none
+      focus:border-cyan-400/40
+      transition-all
+    "
+  />
 
                 </div>
+
+              
 
                 <SkillSelector
                   skills={skills}
@@ -261,7 +413,7 @@ export default function OnboardingForm() {
                         Creating...
                       </>
                     ) : (
-                      "Launch Portfolio →"
+                      "Generate Identity →"
                     )}
                   </button>
 

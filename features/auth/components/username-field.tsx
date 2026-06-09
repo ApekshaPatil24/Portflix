@@ -32,7 +32,13 @@ export default function UsernameField({
         {/* Input */}
         <input
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(e) =>
+  onChange(
+    e.target.value
+      .toLowerCase()
+      .replace(/_/g, "-")
+      .replace(/\s+/g, "-")
+  )}
           spellCheck={false}
           autoComplete="off"
           placeholder="username"

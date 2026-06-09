@@ -10,9 +10,10 @@ export async function onboardUser(
 
   const {
     data: { user },
+    error: authError,
   } = await supabase.auth.getUser()
 
-  if (!user) {
+  if (authError || !user) {
     throw new Error("Unauthorized")
   }
 
@@ -23,57 +24,92 @@ export async function onboardUser(
     throw new Error("Invalid form data")
   }
 
-  const { username, tagline, skills } =
-    validation.data
+  const {
+    username,
+    tagline,
+    skills,
+  } = validation.data
 
-  const existingUser =
+  const normalizedUsername =
+    username.toLowerCase().trim()
+
+  /*
+   * Prevent duplicate onboarding
+   */
+  const existingSupabaseUser =
     await prisma.user.findUnique({
       where: {
-        username: username.toLowerCase(),
+        supabaseId: user.id,
       },
       select: {
         id: true,
       },
     })
 
-  if (existingUser) {
+  if (existingSupabaseUser) {
+    throw new Error(
+      "User has already completed onboarding"
+    )
+  }
+
+  /*
+   * Prevent duplicate usernames
+   */
+  const existingUsername =
+    await prisma.user.findUnique({
+      where: {
+        username: normalizedUsername,
+      },
+      select: {
+        id: true,
+      },
+    })
+
+  if (existingUsername) {
     throw new Error(
       "This username is already taken"
     )
   }
 
-  const metadata = user.user_metadata
+  const metadata =
+    user.user_metadata ?? {}
 
-  const email = user.email ?? ""
+  const email =
+    user.email?.trim() ?? ""
 
   const name =
-    metadata?.full_name ??
-    metadata?.name ??
-    username
+    metadata.full_name?.trim() ??
+    metadata.name?.trim() ??
+    normalizedUsername
 
   const avatarUrl =
-    metadata?.avatar_url ?? null
+    metadata.avatar_url ?? null
 
   const githubUsername =
-    metadata?.user_name ?? null
+    metadata.user_name?.trim() ??
+    null
 
-  const githubUrl = githubUsername
-    ? `https://github.com/${githubUsername}`
-    : null
+  const githubUrl =
+    githubUsername
+      ? `https://github.com/${githubUsername}`
+      : null
 
-  const newUser = await prisma.user.create({
-    data: {
-      supabaseId: user.id,
-      email,
-      username: username.toLowerCase(),
-      name,
-      avatarUrl,
-      tagline,
-      skills,
-      githubUsername,
-      githubUrl,
-    },
-  })
+  const newUser =
+    await prisma.user.create({
+      data: {
+        supabaseId: user.id,
+        email,
+        username:
+          normalizedUsername,
+        name,
+        avatarUrl,
+        tagline:
+          tagline?.trim() ?? null,
+        skills,
+        githubUsername,
+        githubUrl,
+      },
+    })
 
   return {
     success: true,

@@ -15,18 +15,48 @@ export function useUsernameCheck(
     useState<UsernameStatus>("idle")
 
   useEffect(() => {
-    if (!username || username.length < 3) {
-      setStatus("idle")
-      return
-    }
+    const normalized =
+  username.trim().toLowerCase()
+
+if (
+  !normalized ||
+  normalized.length < 3
+) {
+  setStatus("idle")
+  return
+}
+
+if (
+  !/^(?!-)(?!.*--)[a-z0-9-]+(?<!-)$/.test(
+    normalized
+  )
+) {
+  setStatus("idle")
+  return
+}
+
+    const controller =
+      new AbortController()
 
     setStatus("checking")
 
     const timer = setTimeout(async () => {
       try {
         const response = await fetch(
-          `/api/user/check-username?username=${username}`
+  `/api/user/check-username?username=${encodeURIComponent(
+    normalized
+  )}`,
+          {
+            signal:
+              controller.signal,
+          }
         )
+
+        if (!response.ok) {
+          throw new Error(
+            "Username check failed"
+          )
+        }
 
         const data =
           await response.json()
@@ -36,12 +66,22 @@ export function useUsernameCheck(
             ? "available"
             : "taken"
         )
-      } catch {
+      } catch (error) {
+        if (
+          error instanceof DOMException &&
+          error.name === "AbortError"
+        ) {
+          return
+        }
+
         setStatus("idle")
       }
-    }, 600)
+    }, 500)
 
-    return () => clearTimeout(timer)
+    return () => {
+      clearTimeout(timer)
+      controller.abort()
+    }
   }, [username])
 
   return status

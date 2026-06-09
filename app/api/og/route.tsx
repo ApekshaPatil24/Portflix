@@ -1,1 +1,0 @@
-//dynamic OG image generation

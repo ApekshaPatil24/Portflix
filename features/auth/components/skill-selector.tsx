@@ -12,8 +12,83 @@ export default function SkillSelector({
   return (
     <div className="space-y-3">
 
+      {skills.length > 0 && (
+  <div
+    className="
+      p-4
+      rounded-2xl
+      border
+      border-cyan-400/10
+      bg-white/[0.03]
+      mb-4
+    "
+  >
+    <div className="flex items-center justify-between mb-3">
+
+      <span className="text-[11px] uppercase tracking-widest text-white/40">
+        Selected Stack
+      </span>
+
+      <span
+        className={`
+          text-xs font-mono
+          ${
+            skills.length >= 15
+              ? "text-amber-400"
+              : "text-cyan-400"
+          }
+        `}
+      >
+        {skills.length}/20
+      </span>
+
+    </div>
+
+    <div className="flex flex-wrap gap-2">
+
+      {skills.map((skill) => (
+        <button
+          key={skill}
+          type="button"
+          onClick={() =>
+            toggleSkill(skill)
+          }
+          className="
+            px-3
+            py-1.5
+            rounded-full
+            bg-cyan-400/10
+            border
+            border-cyan-400/20
+            text-cyan-400
+            text-xs
+            hover:bg-cyan-400/20
+            transition-all
+          "
+        >
+          {skill}
+        </button>
+      ))}
+
+    </div>
+
+  </div>
+)}
+
       {/* Count indicator */}
       <div className="flex items-center justify-between">
+        {skills.length < 2 && (
+  <p className="text-amber-400 text-xs">
+    Select at least 2 skills to continue
+  </p>
+)}
+
+{skills.length >= 15 && (
+  <p className="text-white/35 text-xs">
+    Focus on your strongest technologies.
+  </p>
+)}
+
         <p className="text-white/30 text-xs">
           {skills.length === 0
             ? "Select at least one skill"

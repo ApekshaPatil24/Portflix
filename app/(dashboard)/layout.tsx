@@ -1,8 +1,9 @@
 //FRONTEND: protected pages (has sidebar)
 //sidebar + topbar wrapper for ALL dashboard pages
 import { redirect } from "next/navigation"
-
+import DashboardShell from "@/features/dashboard/layouts/dashboard-shell"
 import { getCurrentUser } from "@/lib/auth/get-current-user"
+
 
 export default async function DashboardLayout({
   children,
@@ -23,8 +24,8 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div>
+    <DashboardShell>
       {children}
-    </div>
+    </DashboardShell>
   )
 }

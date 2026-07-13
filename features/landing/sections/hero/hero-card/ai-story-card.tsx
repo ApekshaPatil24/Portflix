@@ -43,9 +43,9 @@ export default function AIStoryCard() {
           text-zinc-400
         "
       >
-        "Alex ships fast, writes clean code, and leads
+        &quot;Alex ships fast, writes clean code, and leads
         with empathy. 3× open-source contributor with
-        2.4k stars..."
+        2.4k stars...&quot;
       </p>
 
       {/* footer */}

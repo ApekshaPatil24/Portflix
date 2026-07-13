@@ -9,42 +9,51 @@ import SidebarProgress from "./sidebar-progress";
 export default function Sidebar() {
   return (
     <aside
-  className="
-  w-64
-  overflow-hidden
-  border-r
-  border-zinc-800
-  bg-[#0F0F11]
-  flex flex-col
-"
->
-      <div className="p-6">
-        <h1 className="text-2xl font-bold tracking-tight text-white">
-          PORTLIX
-        </h1>
+      className="
+        w-66
+        overflow-hidden
+        border-r
+        border-white/[0.06]
+        bg-[#050515]/60
+        backdrop-blur-2xl
+        flex flex-col
+        relative
+        z-20
+      "
+    >
+      {/* Decorative vertical light strip */}
+      <div className="absolute right-0 top-0 w-[1px] h-full bg-gradient-to-b from-transparent via-cyan-500/20 to-transparent" />
 
-        <p className="mt-1 text-sm text-zinc-600">
+      <div className="p-6 relative">
+        <div className="flex items-center gap-2">
+          <h1 className="text-2.5xl font-black tracking-[-0.05em] uppercase bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-sky-400 to-violet-500">
+            PORTFLIX
+          </h1>
+          <span className="h-2 w-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_10px_rgba(34,211,238,0.8)]" />
+        </div>
+
+        <p className="mt-1.5 text-[11px] font-mono tracking-widest text-cyan-400/50 uppercase">
           Build. Sync. Showcase.
         </p>
       </div>
 
-      <div className="mx-4 border-t border-zinc-800" />
+      <div className="mx-4 border-t border-white/[0.04]" />
 
-      <div className="px-6 py-4">
-  <p
-    className="
-    text-[11px]
-    uppercase
-    tracking-[0.18em]
-    text-zinc-600
-    "
-  >
-    Navigation
-  </p>
-</div>
+      <div className="px-6 py-5">
+        <p
+          className="
+            text-[10px]
+            font-mono
+            uppercase
+            tracking-[0.25em]
+            text-zinc-500
+          "
+        >
+          System Nodes
+        </p>
+      </div>
 
-      <nav className="flex-1 px-4 space-y-1">
-
+      <nav className="flex-1 px-4 space-y-1.5">
         {sidebarLinks.map((item) => (
           <SidebarItem
             key={item.href}

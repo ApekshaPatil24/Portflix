@@ -56,7 +56,7 @@ export async function onboardUser(
    * Prevent duplicate usernames
    */
   const existingUsername =
-    await prisma.user.findUnique({
+    await prisma.portfolio.findUnique({
       where: {
         username: normalizedUsername,
       },
@@ -99,20 +99,26 @@ export async function onboardUser(
       data: {
         supabaseId: user.id,
         email,
-        username:
-          normalizedUsername,
-        name,
-        avatarUrl,
-        tagline:
-          tagline?.trim() ?? null,
-        skills,
         githubUsername,
-        githubUrl,
+        portfolio: {
+          create: {
+            username: normalizedUsername,
+            displayName: name,
+            avatarUrl,
+            headline: tagline?.trim() ?? "Full Stack Developer",
+            professionalTitle: "Full Stack Developer",
+            skills,
+            githubUrl,
+          },
+        },
+      },
+      include: {
+        portfolio: true,
       },
     })
 
   return {
     success: true,
-    username: newUser.username,
+    username: newUser.portfolio?.username ?? normalizedUsername,
   }
 }

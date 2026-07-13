@@ -35,7 +35,7 @@ export async function isUsernameAvailable(
   }
 
   const existing =
-    await prisma.user.findUnique({
+    await prisma.portfolio.findUnique({
       where: {
         username:
           normalizedUsername,

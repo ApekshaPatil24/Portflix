@@ -18,7 +18,7 @@ export default function FeatureGrid() {
           description={feature.description}
           tag={feature.tag}
           icon={feature.icon}
-          variant={feature.variant as any}
+          variant={feature.variant as "cyan" | "pink" | "purple"}
           large={feature.large}
           showTerminal={feature.showTerminal}
           wide={feature.wide}

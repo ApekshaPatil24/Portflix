@@ -9,6 +9,7 @@ redirects */
 
 import { createClient } from "@/lib/supabase/server"
 import { prisma } from "@/lib/prisma"
+import { sendNotificationEmail } from "@/lib/email/email.service"
 
 export async function handleOAuthCallback(
   code: string,
@@ -52,12 +53,18 @@ export async function handleOAuthCallback(
         supabaseId: user.id,
       },
       select: {
-        username: true,
+        id: true,
+        githubUsername: true,
+        portfolio: {
+          select: {
+            username: true,
+          },
+        },
       },
     })
 
   // Existing user → dashboard
-  if (existingUser) {
+  if (existingUser?.portfolio) {
     return {
       redirectTo: `${origin}/dashboard`,
     }

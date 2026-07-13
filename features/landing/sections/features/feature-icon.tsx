@@ -1,5 +1,5 @@
 type Props = {
-  icon: any
+  icon: React.ComponentType<{ size?: number; strokeWidth?: number; className?: string }>
   variant: "cyan" | "pink" | "purple"
 }
 

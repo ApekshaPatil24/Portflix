@@ -93,7 +93,7 @@ export default function SignalSection() {
             title={signal.title}
             value={signal.value}
             status={signal.status}
-            glow={signal.glow as any}
+            glow={signal.glow as "cyan" | "violet" | "pink"}
           />
         ))}
       </div>

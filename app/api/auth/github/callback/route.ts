@@ -3,6 +3,7 @@ import type { NextRequest } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { getCurrentUser } from "@/lib/auth/get-current-user"
 import { sendNotificationEmail } from "@/lib/email/email.service"
+import { encrypt } from "@/lib/encryption"
 
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url)
@@ -75,6 +76,7 @@ export async function GET(request: NextRequest) {
         where: { id: currentUser.dbUser.id },
         data: {
           githubUsername: verifiedUsername,
+          githubAccessToken: encrypt(accessToken),
         },
       }),
       prisma.portfolio.update({

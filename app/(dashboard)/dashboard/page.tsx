@@ -16,6 +16,10 @@ export default async function Page() {
       displayName: true,
       username: true,
       skills: true,
+      professionalTitle: true,
+      templateKey: true,
+      projects: true,
+      avatarUrl: true,
     },
   })
 
@@ -26,6 +30,10 @@ export default async function Page() {
       displayName={portfolio?.displayName ?? "Developer"}
       username={portfolio?.username ?? "user"}
       skills={portfolio?.skills ?? []}
+      professionalTitle={portfolio?.professionalTitle ?? ""}
+      templateKey={portfolio?.templateKey ?? "minimal"}
+      projects={portfolio?.projects ?? []}
+      avatarUrl={portfolio?.avatarUrl}
     />
   )
 }

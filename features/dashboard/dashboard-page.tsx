@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { 
   Terminal, 
   Activity, 
@@ -12,7 +12,12 @@ import {
   Code,
   UserCircle,
   Sparkles,
-  ArrowRight
+  ArrowRight,
+  GitBranch,
+  Plus,
+  Check,
+  Trash2,
+  X
 } from "lucide-react"
 
 interface Project {
@@ -20,6 +25,7 @@ interface Project {
   title: string
   description: string
   techStack: string[]
+  updatedAt?: string | Date
 }
 
 interface DashboardPageProps {
@@ -32,6 +38,7 @@ interface DashboardPageProps {
   templateKey?: string
   projects?: Project[]
   avatarUrl?: string | null
+  needsSync?: boolean
 }
 
 function generateProceduralTheme(seed: string) {
@@ -64,6 +71,7 @@ export default function DashboardPage({
   templateKey = "minimal",
   projects = [],
   avatarUrl,
+  needsSync = false,
 }: DashboardPageProps) {
   const [connectedUsername, setConnectedUsername] = useState<string | null>(githubUsername)
   const [authError, setAuthError] = useState<string | null>(null)
@@ -71,6 +79,76 @@ export default function DashboardPage({
   const [localAvatar, setLocalAvatar] = useState<string | null | undefined>(avatarUrl)
   const [generatingAvatar, setGeneratingAvatar] = useState(false)
   const [enhancingProjectId, setEnhancingProjectId] = useState<string | null>(null)
+
+  // GitHub Repo Manager States
+  const [pendingRepos, setPendingRepos] = useState<any[]>([])
+  const [importedRepos, setImportedRepos] = useState<any[]>([])
+  const [loadingRepos, setLoadingRepos] = useState(false)
+  const [showRepoModal, setShowRepoModal] = useState(false)
+  const [addingRepoName, setAddingRepoName] = useState<string | null>(null)
+  const [deletingProjectId, setDeletingProjectId] = useState<string | null>(null)
+
+  const fetchGithubRepos = async () => {
+    if (!isGithubConnected) return
+    setLoadingRepos(true)
+    try {
+      const res = await fetch("/api/projects")
+      const data = await res.json()
+      if (res.ok) {
+        setPendingRepos(data.pendingRepos || [])
+        setImportedRepos(data.importedRepos || [])
+      }
+    } catch (err) {
+      console.error("Failed to fetch GitHub repos", err)
+    } finally {
+      setLoadingRepos(false)
+    }
+  }
+
+  const handleImportSingleRepo = async (repoName: string) => {
+    setAddingRepoName(repoName)
+    setLogs(prev => [...prev, `[AI] Fetching repo details for "${repoName}"...`, `[AI] Curator AI analyzing code & README...`])
+    try {
+      const res = await fetch("/api/projects", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ repoName }),
+      })
+      const data = await res.json()
+      if (res.ok && data.project) {
+        setLocalProjects(prev => [data.project, ...prev])
+        setPendingRepos(prev => prev.filter(r => r.name !== repoName))
+        setLogs(prev => [...prev, `[SEC] Project "${repoName}" successfully added to portfolio!`, ">> LIVE PORTFOLIO UPDATED."])
+      } else {
+        setLogs(prev => [...prev, `[ERROR] Failed to add "${repoName}": ${data.error || "Unknown error"}`])
+      }
+    } catch (err: any) {
+      setLogs(prev => [...prev, `[ERROR] Failed to add repository: ${err?.message || "Server error"}`])
+    } finally {
+      setAddingRepoName(null)
+    }
+  }
+
+  const handleDeleteProject = async (projectId: string, projectTitle: string) => {
+    if (!confirm(`Are you sure you want to remove "${projectTitle}" from your portfolio?`)) return
+    setDeletingProjectId(projectId)
+    try {
+      const res = await fetch(`/api/projects/${projectId}`, { method: "DELETE" })
+      if (res.ok) {
+        setLocalProjects(prev => prev.filter(p => p.id !== projectId))
+        setLogs(prev => [...prev, `[SYSTEM] Removed "${projectTitle}" from portfolio.`])
+        // Refresh repos list if modal open
+        fetchGithubRepos()
+      } else {
+        const data = await res.json()
+        setLogs(prev => [...prev, `[ERROR] Failed to remove project: ${data.error || "Error"}`])
+      }
+    } catch (err) {
+      setLogs(prev => [...prev, "[ERROR] Failed to remove project from portfolio."])
+    } finally {
+      setDeletingProjectId(null)
+    }
+  }
 
   const isGithubConnected = !!connectedUsername
   const [syncing, setSyncing] = useState(false)
@@ -92,51 +170,12 @@ export default function DashboardPage({
 
   const theme = generateProceduralTheme(username || "default")
 
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    const err = params.get("error")
-    if (err) {
-      setAuthError(decodeURIComponent(err))
-    }
-  }, [])
-
-  const handleDisconnectGithub = async () => {
-    try {
-      setSyncing(true)
-      setLogs(prev => [...prev, "[SYNC] Initiating disconnect request..."])
-      const response = await fetch("/api/user/disconnect-github", { method: "POST" })
-      const data = await response.json()
-      if (!response.ok) throw new Error(data.error || "Failed to disconnect")
-      setConnectedUsername(null)
-      setLogs(prev => [...prev, "[NET] Disconnect approved by origin server.", "[WARN] GitHub profile detached. Sync channel frozen."])
-    } catch (err) {
-      setLogs(prev => [...prev, `[ERROR] Disconnect pipeline failed: ${err instanceof Error ? err.message : "Server error"}`])
-    } finally {
-      setSyncing(false)
-    }
-  }
-
-  const handleGenerateAvatar = async () => {
-    setGeneratingAvatar(true)
-    setLogs(prev => [...prev, "[AI] Initializing 3D Avatar Generation Engine...", "[AI] Calling DALL-E 3 with optimized developer prompt..."])
-    try {
-      const res = await fetch("/api/user/avatar", { method: "POST" })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error)
-      setLocalAvatar(data.avatarUrl)
-      setLogs(prev => [...prev, "[AI] Avatar generated successfully!", "[SYSTEM] Avatar linked to user profile."])
-    } catch (error) {
-      setLogs(prev => [...prev, `[ERROR] Avatar generation failed: ${error instanceof Error ? error.message : "Unknown"}`])
-    } finally {
-      setGeneratingAvatar(false)
-    }
-  }
-
+  // ─── triggerSync must be defined BEFORE useEffect so the auto-sync closure works ───
   const triggerSync = async () => {
     setSyncing(true)
     setLogs([
       "> Curator AI initiated.",
-      "> Establishing secure connection to GitHub...", 
+      "> Establishing secure connection to GitHub...",
       "> Scanning 5 most recent repositories..."
     ])
 
@@ -146,7 +185,7 @@ export default function DashboardPage({
       "> Extracting tech stacks and keywords...",
       "> Formatting for portfolio presentation..."
     ]
-    
+
     let stepIndex = 0
     const interval = setInterval(() => {
       if (stepIndex < aiSteps.length) {
@@ -156,17 +195,28 @@ export default function DashboardPage({
         clearInterval(interval)
       }
     }, 2000)
-    
+
     try {
       const res = await fetch("/api/projects/sync", { method: "POST" })
       const data = await res.json()
-      
+
       clearInterval(interval)
 
+      // GitHub token expired or revoked
+      if (res.status === 401 && data.code === "GITHUB_TOKEN_EXPIRED") {
+        setConnectedUsername(null)
+        setLogs([
+          "> [TOKEN_EXPIRED] GitHub access token has expired or was revoked.",
+          "> ACTION REQUIRED: Click \"Connect GitHub Account\" to reconnect."
+        ])
+        setAuthError("Your GitHub token expired. Please reconnect your GitHub account.")
+        return
+      }
+
       if (!res.ok) throw new Error(data.error || "Sync failed")
-      
+
       setLogs(prev => [...prev, "> Curator AI completed portfolio generation!", ">> ALL SYSTEMS GO."])
-      
+
       if (data.projects) {
         setLocalProjects(data.projects)
       }
@@ -177,6 +227,71 @@ export default function DashboardPage({
       setSyncing(false)
     }
   }
+
+  // Use a ref so useEffect can call triggerSync without stale closure
+  const triggerSyncRef = useRef<() => Promise<void>>(triggerSync)
+  triggerSyncRef.current = triggerSync
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const err = params.get("error")
+    if (err) {
+      setAuthError(decodeURIComponent(err))
+    }
+    // Auto-sync on mount if GitHub connected but 0 projects in DB
+    if (needsSync) {
+      triggerSyncRef.current()
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const handleDisconnectGithub = async () => {
+    try {
+      setSyncing(true)
+      setLogs(prev => [...prev, "[SYNC] Initiating disconnect request..."])
+      const response = await fetch("/api/user/disconnect-github", { method: "POST" })
+      const data = await response.json().catch(() => ({}))
+      if (!response.ok) throw new Error(data?.error || "Failed to disconnect")
+      setConnectedUsername(null)
+      setLogs(prev => [...prev, "[NET] Disconnect approved by origin server.", "[WARN] GitHub profile detached. Sync channel frozen."])
+    } catch (err) {
+      setLogs(prev => [...prev, `[ERROR] Disconnect pipeline failed: ${err instanceof Error ? err.message : "Server error"}`])
+    } finally {
+      setSyncing(false)
+    }
+  }
+
+  const handleGenerateAvatar = async (force: boolean = false) => {
+    setGeneratingAvatar(true)
+    setLogs(prev => [...prev, "[AI] Initializing 3D Avatar Generation Engine...", "[AI] Calling DALL-E 3 with optimized developer prompt..."])
+    try {
+      const res = await fetch("/api/user/avatar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ forceRegenerate: force }),
+      })
+      const data = await res.json()
+      
+      if (!res.ok) {
+        if (data.code === "AVATAR_ALREADY_EXISTS") {
+          setLogs(prev => [...prev, "[WARN] AI Avatar is already assigned to your profile."])
+          if (confirm("You already have an AI Avatar assigned. Would you like Curator AI to regenerate a new one for you?")) {
+            return handleGenerateAvatar(true)
+          }
+          return
+        }
+        throw new Error(data.error || "Failed to generate avatar")
+      }
+      
+      setLocalAvatar(data.avatarUrl)
+      setLogs(prev => [...prev, "[AI] Avatar generated successfully!", "[SYSTEM] Avatar linked to user profile."])
+    } catch (error) {
+      setLogs(prev => [...prev, `[ERROR] Avatar generation failed: ${error instanceof Error ? error.message : "Unknown"}`])
+    } finally {
+      setGeneratingAvatar(false)
+    }
+  }
+
 
   const handleEnhanceProject = async (projectId: string) => {
     setEnhancingProjectId(projectId)
@@ -246,16 +361,15 @@ export default function DashboardPage({
                   </div>
                 </div>
 
-                {!localAvatar && (
-                  <button 
-                    onClick={handleGenerateAvatar}
-                    disabled={generatingAvatar}
-                    className="mt-3 inline-flex items-center gap-1.5 text-[10px] text-cyan-400 font-mono uppercase font-bold border border-cyan-400/20 px-3 py-1.5 rounded-lg hover:bg-cyan-400/10 transition-all disabled:opacity-50"
-                  >
-                    <UserCircle size={12} />
-                    {generatingAvatar ? "GENERATING AI AVATAR..." : "GENERATE AI AVATAR"}
-                  </button>
-                )}
+                <button 
+                  onClick={() => handleGenerateAvatar(false)}
+                  disabled={generatingAvatar}
+                  className="mt-3 inline-flex items-center gap-1.5 text-[10px] text-cyan-400 font-mono uppercase font-bold border border-cyan-400/20 px-3 py-1.5 rounded-lg hover:bg-cyan-400/10 transition-all disabled:opacity-50 cursor-pointer"
+                >
+                  <UserCircle size={12} />
+                  {generatingAvatar ? "GENERATING AI AVATAR..." : (localAvatar ? "REGENERATE AI AVATAR" : "GENERATE AI AVATAR")}
+                </button>
+
               </div>
             </div>
           </div>
@@ -468,7 +582,7 @@ export default function DashboardPage({
               </button>
             </div>
             <div className="space-y-1.5 text-xs text-zinc-400 max-h-[160px] overflow-y-auto leading-relaxed">
-              {logs.map((log, index) => {
+              {logs.filter((log): log is string => typeof log === "string").map((log, index) => {
                 let colorClass = "text-zinc-400"
                 if (log.startsWith("[SYSTEM]")) colorClass = "text-violet-400"
                 if (log.startsWith("[SYNC]")) colorClass = "text-cyan-400"
@@ -527,8 +641,174 @@ export default function DashboardPage({
               )}
             </div>
           </section>
+
+          {/* GitHub Repositories Manager Card */}
+          {isGithubConnected && (
+            <section className="rounded-2xl border border-cyan-500/20 bg-[#07071e]/50 p-5 backdrop-blur-xl relative overflow-hidden">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <GitBranch size={16} className="text-cyan-400" />
+                  <h2 className="text-xs font-mono font-semibold uppercase tracking-widest text-zinc-300">GitHub Repositories</h2>
+                </div>
+                <button
+                  onClick={() => {
+                    setShowRepoModal(true)
+                    fetchGithubRepos()
+                  }}
+                  className="px-3 py-1 text-[10px] font-mono font-bold uppercase tracking-wider rounded-lg bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500/30 transition-all flex items-center gap-1 cursor-pointer"
+                >
+                  <Plus size={12} /> Manage Repos
+                </button>
+              </div>
+
+              <p className="text-[11px] text-zinc-400 leading-relaxed mb-4">
+                Control which GitHub projects appear in your public portfolio. Import new repositories or remove existing ones with one click.
+              </p>
+
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-[11px] font-mono p-2.5 rounded-xl border border-white/[0.04] bg-black/40 text-zinc-300">
+                  <span>Portfolio Projects</span>
+                  <span className="font-bold text-cyan-400">{localProjects.length} Active</span>
+                </div>
+              </div>
+            </section>
+          )}
         </div>
       </div>
+
+      {/* GitHub Repositories Modal */}
+      {showRepoModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+          <div className="relative w-full max-w-2xl rounded-2xl border border-cyan-500/30 bg-[#07071e] p-6 md:p-8 shadow-2xl space-y-6 max-h-[85vh] overflow-y-auto">
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-white/10 pb-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-xl bg-cyan-500/10 border border-cyan-500/20">
+                  <GitBranch className="h-5 w-5 text-cyan-400" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white tracking-tight">GitHub Repository Manager</h3>
+                  <p className="text-xs text-zinc-400">Choose which GitHub repos to add or remove from your public portfolio.</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowRepoModal(false)}
+                className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-white/10 transition-colors"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {loadingRepos ? (
+              <div className="py-12 flex flex-col items-center justify-center gap-3 text-cyan-400 font-mono text-xs">
+                <RefreshCw size={24} className="animate-spin text-cyan-400" />
+                <span>Scanning GitHub repositories for @{connectedUsername}...</span>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {/* 1. Pending Repositories (Not in Portfolio) */}
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <h4 className="text-xs font-mono uppercase font-bold text-amber-400 flex items-center gap-1.5">
+                      <Plus size={14} /> Available GitHub Repos ({pendingRepos.length})
+                    </h4>
+                    <span className="text-[10px] text-zinc-500 font-mono">Click + ADD to run Curator AI</span>
+                  </div>
+
+                  {pendingRepos.length === 0 ? (
+                    <div className="p-4 rounded-xl border border-white/5 bg-black/40 text-center text-xs text-zinc-500">
+                      All your public GitHub repositories are already added to your portfolio!
+                    </div>
+                  ) : (
+                    <div className="space-y-2.5">
+                      {pendingRepos.map((repo) => (
+                        <div
+                          key={repo.name}
+                          className="p-3.5 rounded-xl border border-white/10 bg-black/40 flex items-center justify-between gap-4 hover:border-cyan-500/30 transition-all"
+                        >
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="font-bold text-sm text-white truncate">{repo.name}</span>
+                              {repo.language && (
+                                <span className="px-2 py-0.5 rounded text-[9px] font-mono bg-white/10 text-zinc-300">
+                                  {repo.language}
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-xs text-zinc-400 truncate">{repo.description || "No description provided on GitHub."}</p>
+                          </div>
+
+                          <button
+                            onClick={() => handleImportSingleRepo(repo.name)}
+                            disabled={addingRepoName === repo.name}
+                            className="px-4 py-2 rounded-xl text-xs font-bold uppercase font-mono tracking-wider bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500/30 transition-all flex items-center gap-1.5 shrink-0 disabled:opacity-50 cursor-pointer"
+                          >
+                            {addingRepoName === repo.name ? (
+                              <>
+                                <RefreshCw size={12} className="animate-spin" /> ADDING...
+                              </>
+                            ) : (
+                              <>
+                                <Plus size={12} /> ADD TO PORTFOLIO
+                              </>
+                            )}
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* 2. Currently Active Portfolio Projects */}
+                <div>
+                  <h4 className="text-xs font-mono uppercase font-bold text-emerald-400 flex items-center gap-1.5 mb-3">
+                    <Check size={14} /> Active Portfolio Projects ({localProjects.length})
+                  </h4>
+
+                  {localProjects.length === 0 ? (
+                    <div className="p-4 rounded-xl border border-white/5 bg-black/40 text-center text-xs text-zinc-500">
+                      No active projects in portfolio. Add repos from above!
+                    </div>
+                  ) : (
+                    <div className="space-y-2.5">
+                      {localProjects.map((project) => (
+                        <div
+                          key={project.id}
+                          className="p-3.5 rounded-xl border border-emerald-500/20 bg-emerald-950/10 flex items-center justify-between gap-4"
+                        >
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="font-bold text-sm text-white truncate">{project.title}</span>
+                              <span className="px-2 py-0.5 rounded text-[9px] font-mono bg-emerald-500/20 text-emerald-300">
+                                ACTIVE
+                              </span>
+                            </div>
+                            <p className="text-xs text-zinc-400 truncate">{project.description}</p>
+                          </div>
+
+                          <button
+                            onClick={() => handleDeleteProject(project.id, project.title)}
+                            disabled={deletingProjectId === project.id}
+                            className="px-3.5 py-2 rounded-xl text-xs font-bold uppercase font-mono tracking-wider bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 transition-all flex items-center gap-1.5 shrink-0 disabled:opacity-50 cursor-pointer"
+                          >
+                            {deletingProjectId === project.id ? (
+                              "REMOVING..."
+                            ) : (
+                              <>
+                                <Trash2 size={12} /> REMOVE
+                              </>
+                            )}
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

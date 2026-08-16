@@ -37,8 +37,16 @@ export async function POST() {
       }
     )
 
+    // Token expired or revoked by GitHub
+    if (reposResponse.status === 401) {
+      return NextResponse.json(
+        { error: "GitHub token expired or revoked. Please reconnect your GitHub account from the dashboard.", code: "GITHUB_TOKEN_EXPIRED" },
+        { status: 401 }
+      )
+    }
+
     if (!reposResponse.ok) {
-      throw new Error("Failed to fetch repositories from GitHub")
+      throw new Error(`Failed to fetch repositories from GitHub (status: ${reposResponse.status})`)
     }
 
     const repos = await reposResponse.json()

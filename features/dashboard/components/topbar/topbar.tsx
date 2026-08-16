@@ -1,21 +1,43 @@
-import {
-  Bell,
-  Search,
-} from "lucide-react";
+"use client"
+
+import { useState, useEffect } from "react"
+import { ExternalLink, Eye, Sun, Moon } from "lucide-react"
+import { useTheme } from "@/features/dashboard/components/theme-provider"
+import PortfolioQRModal from "@/features/portfolio/components/portfolio-qr-modal"
 
 export default function Topbar() {
+  const [username, setUsername] = useState<string | null>(null)
+  const [displayName, setDisplayName] = useState<string | undefined>(undefined)
+  const { theme, toggleTheme } = useTheme()
+
+  useEffect(() => {
+    async function fetchUserUsername() {
+      try {
+        const res = await fetch("/api/user/portfolio")
+        const data = await res.json()
+        if (data?.portfolio?.username) {
+          setUsername(data.portfolio.username)
+          setDisplayName(data.portfolio.displayName)
+        }
+      } catch (err) {
+        console.error("Failed to fetch username for topbar preview", err)
+      }
+    }
+    fetchUserUsername()
+  }, [])
+
   return (
     <header
       className="
         h-16
         border-b
         border-white/[0.04]
-        bg-[#03030d]/30
+        bg-[#03030d]/40
         backdrop-blur-md
         px-6
         sticky
         top-0
-        z-10
+        z-30
       "
     >
       <div className="flex h-full items-center justify-between">
@@ -27,41 +49,57 @@ export default function Topbar() {
         </div>
 
         <div className="flex items-center gap-3">
+          {/* Light / Dark Mode Toggle */}
           <button
+            onClick={toggleTheme}
             className="
               flex h-9 w-9 items-center justify-center
               rounded-xl
-              border border-white/[0.04]
-              bg-[#050515]/60
-              text-zinc-500
-              hover:text-cyan-300
-              hover:border-cyan-500/20
-              hover:shadow-[0_0_15px_rgba(34,211,238,0.1)]
+              border border-white/[0.1]
+              bg-white/5
+              text-zinc-300
+              hover:text-cyan-400
+              hover:border-cyan-500/40
               transition-all
-              duration-300
               cursor-pointer
             "
+            title={`Switch to ${theme === "dark" ? "Light Mode" : "Dark Mode"}`}
           >
-            <Search size={16} />
+            {theme === "dark" ? <Sun size={16} className="text-amber-400" /> : <Moon size={16} className="text-indigo-400" />}
           </button>
 
-          <button
-            className="
-              flex h-9 w-9 items-center justify-center
-              rounded-xl
-              border border-white/[0.04]
-              bg-[#050515]/60
-              text-zinc-500
-              hover:text-cyan-300
-              hover:border-cyan-500/20
-              hover:shadow-[0_0_15px_rgba(34,211,238,0.1)]
-              transition-all
-              duration-300
-              cursor-pointer
-            "
-          >
-            <Bell size={16} />
-          </button>
+          {/* Unique QR Code Generator */}
+          {username && (
+            <PortfolioQRModal username={username} displayName={displayName} />
+          )}
+
+          {/* Universal Live Portfolio Preview Button */}
+          {username && (
+            <a
+              href={`/${username}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="
+                flex items-center gap-2
+                px-4 py-1.5
+                rounded-xl
+                border border-cyan-500/30
+                bg-cyan-500/10
+                text-cyan-400
+                hover:bg-cyan-500/20
+                hover:border-cyan-400/60
+                hover:shadow-[0_0_20px_rgba(34,211,238,0.25)]
+                text-xs font-mono font-bold uppercase tracking-wider
+                transition-all
+                duration-300
+                cursor-pointer
+              "
+            >
+              <Eye size={14} className="animate-pulse" />
+              <span>Live Preview</span>
+              <ExternalLink size={12} />
+            </a>
+          )}
 
           <div
             className="
@@ -78,5 +116,5 @@ export default function Topbar() {
         </div>
       </div>
     </header>
-  );
+  )
 }

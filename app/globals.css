@@ -155,4 +155,91 @@ body {
 
 body {
   min-height: 100vh;
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+/* ── ELEGANT LIGHT MODE DESIGN SYSTEM ── */
+html.light-mode,
+html.light-mode body {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+html.light-mode aside {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+html.light-mode header {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  border-color: #e2e8f0 !important;
+}
+
+html.light-mode main section,
+html.light-mode .backdrop-blur-xl,
+html.light-mode .backdrop-blur-md {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  color: #0f172a !important;
+  box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.05) !important;
+}
+
+html.light-mode h1,
+html.light-mode h2,
+html.light-mode h3,
+html.light-mode h4,
+html.light-mode h5,
+html.light-mode h6,
+html.light-mode .text-white,
+html.light-mode .text-zinc-200,
+html.light-mode .text-zinc-300,
+html.light-mode .text-zinc-400 {
+  color: #0f172a !important;
+}
+
+html.light-mode p,
+html.light-mode span.text-zinc-400,
+html.light-mode span.text-zinc-500,
+html.light-mode .text-zinc-500,
+html.light-mode .text-zinc-600 {
+  color: #475569 !important;
+}
+
+html.light-mode input,
+html.light-mode textarea,
+html.light-mode select {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+
+html.light-mode input::placeholder,
+html.light-mode textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+html.light-mode [class*="bg-black"],
+html.light-mode [class*="bg-[#02020a]"],
+html.light-mode [class*="bg-[#050515]"],
+html.light-mode [class*="bg-[#07071e]"],
+html.light-mode [class*="bg-[#03030d]"] {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #e2e8f0 !important;
+}
+
+html.light-mode .border-white\/\[0\.04\],
+html.light-mode .border-white\/\[0\.06\],
+html.light-mode .border-white\/10,
+html.light-mode .border-white\/20 {
+  border-color: #e2e8f0 !important;
+}
+
+html.light-mode .text-cyan-400 {
+  color: #0284c7 !important;
+}
+
+html.light-mode .bg-cyan-500\/10,
+html.light-mode .bg-cyan-500\/20 {
+  background-color: rgba(2, 132, 199, 0.1) !important;
 }

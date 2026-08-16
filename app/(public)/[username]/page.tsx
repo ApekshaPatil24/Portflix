@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation"
 import { prisma } from "@/lib/prisma"
 import { Metadata } from "next"
-import { ExternalLink, Terminal, Cpu, Blocks, Mail, MapPin, Code2 } from "lucide-react"
 
 interface Props {
   params: { username: string }
@@ -9,28 +8,39 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { username } = await params
-  const portfolio = await prisma.portfolio.findUnique({
-    where: { username },
-  })
+  const portfolio = await prisma.portfolio.findUnique({ where: { username } })
 
-  if (!portfolio) {
-    return { title: "Portfolio Not Found" }
-  }
+  if (!portfolio) return { title: "Portfolio Not Found" }
 
   return {
     title: `${portfolio.displayName} | ${portfolio.professionalTitle}`,
-    description: `Professional portfolio of ${portfolio.displayName}.`,
+    description: portfolio.headline || `Professional portfolio of ${portfolio.displayName}.`,
+    openGraph: {
+      title: `${portfolio.displayName} | ${portfolio.professionalTitle}`,
+      description: portfolio.headline || `Professional portfolio of ${portfolio.displayName}.`,
+      images: portfolio.avatarUrl ? [portfolio.avatarUrl] : [],
+    },
   }
 }
 
-import PortfolioClient from "./portfolio-client"
+// Lazy-import all 5 templates — only the chosen one is server-rendered
+import TemplateFullstack from "./templates/template-fullstack"
+import TemplateBackend from "./templates/template-backend"
+import TemplateFrontend from "./templates/template-frontend"
+import TemplateUIUX from "./templates/template-uiux"
+import TemplateOther from "./templates/template-other"
+import RecruiterContactModal from "@/features/portfolio/components/recruiter-contact-modal"
 
-function getTechThemeIndex(seed: string) {
-  let hash = 0;
-  for (let i = 0; i < seed.length; i++) {
-    hash = seed.charCodeAt(i) + ((hash << 5) - hash);
+
+function getTemplateComponent(key: string) {
+  switch (key) {
+    case "fullstack": return TemplateFullstack
+    case "backend":   return TemplateBackend
+    case "frontend":  return TemplateFrontend
+    case "uiux":      return TemplateUIUX
+    case "other":     return TemplateOther
+    default:          return TemplateFullstack
   }
-  return Math.abs(hash) % 4
 }
 
 export default async function PublicPortfolioPage({ params }: Props) {
@@ -39,22 +49,19 @@ export default async function PublicPortfolioPage({ params }: Props) {
     where: { username },
     include: {
       user: true,
-      projects: {
-        orderBy: { updatedAt: 'desc' }
-      }
+      projects: { orderBy: { updatedAt: "desc" } }
     }
   })
 
-  if (!portfolio) {
-    notFound()
-  }
+  if (!portfolio) notFound()
 
-  const initialThemeIndex = getTechThemeIndex(portfolio.username)
+  const Template = getTemplateComponent(portfolio.templateKey ?? "fullstack")
 
   return (
-    <PortfolioClient 
-      portfolio={portfolio} 
-      initialThemeIndex={initialThemeIndex} 
-    />
+    <>
+      <Template portfolio={portfolio} />
+      <RecruiterContactModal username={portfolio.username} displayName={portfolio.displayName} />
+    </>
   )
 }
+

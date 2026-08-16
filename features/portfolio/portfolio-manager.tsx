@@ -1,7 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Sparkles, Save, Code2, AlertTriangle, ExternalLink, RefreshCw, Pencil } from "lucide-react"
+import { useTheme } from "@/features/dashboard/components/theme-provider"
+import { Sparkles, Save, Code2, AlertTriangle, ExternalLink, RefreshCw, Pencil, Trash2, Plus, GitBranch } from "lucide-react"
 
 interface Project {
   id: string
@@ -32,6 +33,9 @@ interface PortfolioAuditSuggestion {
 }
 
 export default function PortfolioManager() {
+  const { theme: currentTheme } = useTheme()
+  const isLight = currentTheme === "light"
+
   const [projects, setProjects] = useState<Project[]>([])
   const [portfolio, setPortfolio] = useState<PortfolioData | null>(null)
   const [suggestions, setSuggestions] = useState<PortfolioAuditSuggestion[]>([])
@@ -45,13 +49,16 @@ export default function PortfolioManager() {
   const [message, setMessage] = useState("")
 
   const theme = {
-    bg: "#03030d",
-    cardBg: "#07071e",
-    border: "rgba(255, 255, 255, 0.06)",
-    text: "#f4f4f5",
-    mutedText: "#a1a1aa",
-    accent: "#22d3ee",
+    bg: isLight ? "#fafaf9" : "#03030d",
+    cardBg: isLight ? "#ffffff" : "#07071e",
+    border: isLight ? "#e7e5e4" : "rgba(255, 255, 255, 0.06)",
+    text: isLight ? "#1c1917" : "#f4f4f5",
+    mutedText: isLight ? "#78716c" : "#a1a1aa",
+    accent: isLight ? "#0284c7" : "#22d3ee",
+    inputBg: isLight ? "#f5f5f4" : "rgba(0,0,0,0.4)",
+    inputBorder: isLight ? "#d6d3d1" : "rgba(255,255,255,0.06)",
   }
+
 
   useEffect(() => {
     async function fetchData() {
@@ -139,6 +146,29 @@ export default function PortfolioManager() {
     }
   }
 
+  const [deletingId, setDeletingId] = useState<string | null>(null)
+
+  const handleDeleteProject = async (projectId: string) => {
+    if (!confirm("Are you sure you want to remove this project from your portfolio?")) return
+    setDeletingId(projectId)
+    try {
+      const res = await fetch(`/api/projects/${projectId}`, { method: "DELETE" })
+      if (res.ok) {
+        setProjects(prev => prev.filter(p => p.id !== projectId))
+        setMessage("Project removed from portfolio.")
+        setTimeout(() => setMessage(""), 4000)
+      } else {
+        const data = await res.json()
+        setMessage(data.error || "Failed to remove project.")
+      }
+    } catch (err) {
+      console.error("Delete failed", err)
+      setMessage("Failed to remove project.")
+    } finally {
+      setDeletingId(null)
+    }
+  }
+
   const handleEnhanceProject = async (projectId: string) => {
     setEnhancingId(projectId)
     try {
@@ -167,7 +197,7 @@ export default function PortfolioManager() {
       <div className="flex justify-between items-center">
         <div>
           <div className="flex items-center gap-4 mb-2">
-            <h1 className="text-3xl font-bold tracking-tight text-white">Portfolio Manager</h1>
+            <h1 className="text-3xl font-bold tracking-tight" style={{ color: theme.text }}>Portfolio Manager</h1>
             <button
               onClick={handleStartWizard}
               className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-violet-500/20 to-cyan-500/20 border border-cyan-500/30 text-cyan-400 font-bold font-mono text-[11px] uppercase tracking-wider hover:brightness-125 transition-all"
@@ -261,53 +291,53 @@ export default function PortfolioManager() {
               <>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-xs font-mono uppercase text-zinc-500 tracking-wider">Display Name</label>
-                    <input name="displayName" value={portfolio.displayName || ""} onChange={handleChange} className="w-full bg-black/40 border rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500/50" style={{ borderColor: theme.border }} />
+                    <label className="text-xs font-mono uppercase tracking-wider" style={{ color: theme.mutedText }}>Display Name</label>
+                    <input name="displayName" value={portfolio.displayName || ""} onChange={handleChange} className="w-full border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-cyan-500/50" style={{ backgroundColor: theme.inputBg, borderColor: theme.inputBorder, color: theme.text }} />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-mono uppercase text-zinc-500 tracking-wider">Professional Title</label>
-                    <input name="professionalTitle" value={portfolio.professionalTitle || ""} onChange={handleChange} className="w-full bg-black/40 border rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500/50" style={{ borderColor: theme.border }} />
+                    <label className="text-xs font-mono uppercase tracking-wider" style={{ color: theme.mutedText }}>Professional Title</label>
+                    <input name="professionalTitle" value={portfolio.professionalTitle || ""} onChange={handleChange} className="w-full border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-cyan-500/50" style={{ backgroundColor: theme.inputBg, borderColor: theme.inputBorder, color: theme.text }} />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-mono uppercase text-zinc-500 tracking-wider">Headline / Intro</label>
-                  <input name="headline" value={portfolio.headline || ""} onChange={handleChange} className="w-full bg-black/40 border rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500/50" style={{ borderColor: theme.border }} />
+                  <label className="text-xs font-mono uppercase tracking-wider" style={{ color: theme.mutedText }}>Headline / Intro</label>
+                  <input name="headline" value={portfolio.headline || ""} onChange={handleChange} className="w-full border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-cyan-500/50" style={{ backgroundColor: theme.inputBg, borderColor: theme.inputBorder, color: theme.text }} />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-mono uppercase text-zinc-500 tracking-wider">About Me Section</label>
-                  <textarea name="about" value={portfolio.about || ""} onChange={handleChange} rows={5} className="w-full bg-black/40 border rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500/50" style={{ borderColor: theme.border }} />
+                  <label className="text-xs font-mono uppercase tracking-wider" style={{ color: theme.mutedText }}>About Me Section</label>
+                  <textarea name="about" value={portfolio.about || ""} onChange={handleChange} rows={5} className="w-full border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-cyan-500/50" style={{ backgroundColor: theme.inputBg, borderColor: theme.inputBorder, color: theme.text }} />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-xs font-mono uppercase text-zinc-500 tracking-wider">Location</label>
-                    <input name="location" value={portfolio.location || ""} onChange={handleChange} className="w-full bg-black/40 border rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500/50" style={{ borderColor: theme.border }} />
+                    <label className="text-xs font-mono uppercase tracking-wider" style={{ color: theme.mutedText }}>Location</label>
+                    <input name="location" value={portfolio.location || ""} onChange={handleChange} className="w-full border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-cyan-500/50" style={{ backgroundColor: theme.inputBg, borderColor: theme.inputBorder, color: theme.text }} />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-mono uppercase text-zinc-500 tracking-wider">GitHub URL</label>
-                    <input name="githubUrl" value={portfolio.githubUrl || ""} onChange={handleChange} className="w-full bg-black/40 border rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500/50" style={{ borderColor: theme.border }} />
+                    <label className="text-xs font-mono uppercase tracking-wider" style={{ color: theme.mutedText }}>GitHub URL</label>
+                    <input name="githubUrl" value={portfolio.githubUrl || ""} onChange={handleChange} className="w-full border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-cyan-500/50" style={{ backgroundColor: theme.inputBg, borderColor: theme.inputBorder, color: theme.text }} />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-xs font-mono uppercase text-zinc-500 tracking-wider">LinkedIn URL</label>
-                    <input name="linkedinUrl" value={portfolio.linkedinUrl || ""} onChange={handleChange} className="w-full bg-black/40 border rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500/50" style={{ borderColor: theme.border }} />
+                    <label className="text-xs font-mono uppercase tracking-wider" style={{ color: theme.mutedText }}>LinkedIn URL</label>
+                    <input name="linkedinUrl" value={portfolio.linkedinUrl || ""} onChange={handleChange} className="w-full border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-cyan-500/50" style={{ backgroundColor: theme.inputBg, borderColor: theme.inputBorder, color: theme.text }} />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-mono uppercase text-zinc-500 tracking-wider">Twitter URL</label>
-                    <input name="twitterUrl" value={portfolio.twitterUrl || ""} onChange={handleChange} className="w-full bg-black/40 border rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-cyan-500/50" style={{ borderColor: theme.border }} />
+                    <label className="text-xs font-mono uppercase tracking-wider" style={{ color: theme.mutedText }}>Twitter URL</label>
+                    <input name="twitterUrl" value={portfolio.twitterUrl || ""} onChange={handleChange} className="w-full border rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-cyan-500/50" style={{ backgroundColor: theme.inputBg, borderColor: theme.inputBorder, color: theme.text }} />
                   </div>
                 </div>
 
                 <div className="flex items-center justify-between pt-4 border-t" style={{ borderColor: theme.border }}>
-                  <span className="text-xs text-emerald-400 font-mono">{message}</span>
+                  <span className="text-xs text-emerald-500 font-mono">{message}</span>
                   <button 
                     onClick={handleSaveInfo}
                     disabled={saving}
-                    className="flex items-center gap-2 bg-white text-black px-5 py-2 rounded font-bold text-xs uppercase tracking-wider hover:bg-zinc-200 transition-colors disabled:opacity-50"
+                    className="flex items-center gap-2 bg-cyan-500 text-slate-950 px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-cyan-400 transition-colors disabled:opacity-50 cursor-pointer shadow-sm"
                   >
                     <Save size={14} />
                     {saving ? "SAVING..." : "SAVE SECTIONS"}
@@ -322,28 +352,29 @@ export default function PortfolioManager() {
         <section className="space-y-6">
           <div className="rounded-2xl border p-6 shadow-lg" style={{ backgroundColor: theme.cardBg, borderColor: theme.border }}>
             <div className="flex items-center gap-2 mb-6 border-b pb-4" style={{ borderColor: theme.border }}>
-              <Code2 size={18} className="text-violet-400" />
-              <h2 className="text-sm font-mono uppercase tracking-widest font-semibold text-zinc-300">Curator AI Project List</h2>
+              <Code2 size={18} className="text-violet-500" />
+              <h2 className="text-sm font-mono uppercase tracking-widest font-semibold" style={{ color: theme.text }}>Curator AI Project List</h2>
             </div>
 
             <div className="space-y-4">
               {projects.length === 0 ? (
                 <div className="text-center p-8 border border-dashed rounded-xl" style={{ borderColor: theme.border }}>
-                  <p className="text-sm text-zinc-500">No projects synced yet. Go to your Dashboard to sync with GitHub.</p>
+                  <p className="text-sm" style={{ color: theme.mutedText }}>No projects synced yet. Go to your Dashboard to sync with GitHub.</p>
                 </div>
               ) : (
                 projects.map(project => (
-                  <div key={project.id} className="p-5 rounded-xl border flex flex-col gap-3 transition-all hover:border-cyan-500/30" style={{ backgroundColor: "#02030d", borderColor: theme.border }}>
+                  <div key={project.id} className="p-5 rounded-xl border flex flex-col gap-3 transition-all hover:shadow-md" style={{ backgroundColor: theme.cardBg, borderColor: theme.border }}>
                     <div className="flex items-center justify-between">
-                      <span className="font-bold text-sm tracking-tight text-white">{project.title}</span>
-                      <span className="text-[10px] uppercase opacity-50 font-mono tracking-widest">
+                      <span className="font-bold text-sm tracking-tight" style={{ color: theme.text }}>{project.title}</span>
+                      <span className="text-[10px] uppercase font-mono tracking-widest" style={{ color: theme.mutedText }}>
                         {new Date(project.updatedAt).toLocaleDateString()}
                       </span>
                     </div>
                     
-                    <p className="text-xs leading-relaxed text-zinc-400">
+                    <p className="text-xs leading-relaxed" style={{ color: theme.mutedText }}>
                       {project.description || "No description provided."}
                     </p>
+
                     
                     <div className="flex flex-wrap gap-1.5 mb-2">
                       {project.techStack.map(tech => (
@@ -356,7 +387,16 @@ export default function PortfolioManager() {
                       )}
                     </div>
 
-                    <div className="pt-3 border-t flex justify-end" style={{ borderColor: theme.border }}>
+                    <div className="pt-3 border-t flex items-center justify-between" style={{ borderColor: theme.border }}>
+                      <button
+                        onClick={() => handleDeleteProject(project.id)}
+                        disabled={deletingId === project.id}
+                        className="text-[10px] uppercase font-bold font-mono tracking-wider flex items-center gap-1 text-red-400 hover:text-red-300 transition-all disabled:opacity-50"
+                      >
+                        <Trash2 size={12} />
+                        {deletingId === project.id ? "REMOVING..." : "REMOVE"}
+                      </button>
+
                       <button
                         onClick={() => handleEnhanceProject(project.id)}
                         disabled={enhancingId === project.id}
@@ -364,7 +404,7 @@ export default function PortfolioManager() {
                         style={{ color: theme.accent }}
                       >
                         <Sparkles size={12} />
-                        {enhancingId === project.id ? "CURATOR AI IS REWRITING..." : "REWRITE WITH CURATOR AI"}
+                        {enhancingId === project.id ? "REWRITING..." : "REWRITE WITH AI"}
                       </button>
                     </div>
                   </div>

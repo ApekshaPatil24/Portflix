@@ -18,10 +18,16 @@ export default async function Page() {
       skills: true,
       professionalTitle: true,
       templateKey: true,
-      projects: true,
+      projects: {
+        orderBy: { updatedAt: "desc" }
+      },
       avatarUrl: true,
     },
   })
+
+  // If GitHub is connected but has no projects — pass a flag so dashboard prompts re-sync
+  const hasGithub = !!currentUser.dbUser.githubUsername
+  const hasProjects = (portfolio?.projects?.length ?? 0) > 0
 
   return (
     <DashboardPage
@@ -34,6 +40,7 @@ export default async function Page() {
       templateKey={portfolio?.templateKey ?? "minimal"}
       projects={portfolio?.projects ?? []}
       avatarUrl={portfolio?.avatarUrl}
+      needsSync={hasGithub && !hasProjects}
     />
   )
 }

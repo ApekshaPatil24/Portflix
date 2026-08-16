@@ -1,5 +1,30 @@
+"use client"
+
+import { useState, useEffect } from "react"
+
 export default function SidebarProgress() {
-  const progress = 35;
+  const [score, setScore] = useState(35)
+
+  useEffect(() => {
+    async function calculateRealScore() {
+      try {
+        const res = await fetch("/api/user/portfolio")
+        const data = await res.json()
+        if (data?.portfolio) {
+          const { avatarUrl, projects, skills, githubUrl } = data.portfolio
+          let calc = 20 // Base score for creating account
+          if (githubUrl) calc += 25
+          if (projects && projects.length > 0) calc += 35
+          if (avatarUrl) calc += 10
+          if (skills && skills.length > 0) calc += 10
+          setScore(calc)
+        }
+      } catch (err) {
+        console.error("Failed to load showcase score", err)
+      }
+    }
+    calculateRealScore()
+  }, [])
 
   return (
     <div className="px-4 pb-4">
@@ -17,20 +42,22 @@ export default function SidebarProgress() {
           </span>
 
           <span className="text-cyan-400 font-bold">
-            {progress}%
+            {score}%
           </span>
         </div>
 
         <div className="mt-2.5 h-1.5 overflow-hidden rounded-full bg-white/[0.04] p-[1px]">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-sky-400 shadow-[0_0_8px_rgba(34,211,238,0.5)]"
-            style={{ width: `${progress}%` }}
+            className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-sky-400 shadow-[0_0_8px_rgba(34,211,238,0.5)] transition-all duration-1000"
+            style={{ width: `${score}%` }}
           />
         </div>
 
-        <button
+        <a
+          href="/portfolio"
           className="
             mt-3
+            block
             w-full
             text-center
             text-[10px]
@@ -43,8 +70,8 @@ export default function SidebarProgress() {
           "
         >
           &gt; OPTIMIZE SYSTEM
-        </button>
+        </a>
       </div>
     </div>
-  );
+  )
 }

@@ -3,7 +3,7 @@ import {
   Globe,
   BarChart3,
   Plug,
-  Palette,
+  LayoutTemplate,
   Settings,
 } from "lucide-react";
 
@@ -29,9 +29,9 @@ export const sidebarLinks = [
     icon: Plug,
   },
   {
-    title: "Themes",
-    href: "/themes",
-    icon: Palette,
+    title: "Templates",
+    href: "/templates",
+    icon: LayoutTemplate,
   },
   {
     title: "Settings",

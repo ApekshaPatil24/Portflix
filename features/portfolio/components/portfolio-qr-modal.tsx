@@ -22,7 +22,8 @@ export default function PortfolioQRModal({ username, displayName }: PortfolioQRM
   // Construct absolute URL targeting the public portfolio
   const portfolioUrl = typeof window !== "undefined" 
     ? `${window.location.origin}/${username}`
-    : `http://localhost:3000/${username}`
+    : `https://portflix-steel.vercel.app/${username}`
+
 
   useEffect(() => {
     // Generate QR code using reliable QR server API with crisp resolution

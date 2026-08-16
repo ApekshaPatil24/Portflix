@@ -200,8 +200,8 @@ export async function POST(request: Request) {
         botReply = "The Prime Minister of India is **Narendra Modi** (in office since 2014). Let me know if you have any other questions, whether about general facts or Portflix features!"
       }
       // Portfolio Preview
-      else if (lower.includes("preview") || lower.includes("live portfolio") || lower.includes("see my portfolio")) {
-        botReply = "You can view your live portfolio preview anytime by clicking the glowing **'Live Preview ↗'** button in the top header bar, or by opening `http://localhost:3000/YOUR_USERNAME`!"
+      else if (lower.includes("preview") || lower.includes("live")) {
+        botReply = "You can view your live portfolio preview anytime by clicking the glowing **'Live Preview ↗'** button in the top right header bar, or by visiting `https://portflix-steel.vercel.app/YOUR_USERNAME`!"
       }
       // Theme / Light mode / Dark mode
       else if (lower.includes("mode") || lower.includes("theme") || lower.includes("light") || lower.includes("dark") || lower.includes("switch")) {

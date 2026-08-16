@@ -19,9 +19,9 @@ export default function PortfolioQRModal({ username, displayName }: PortfolioQRM
     : `http://localhost:3000/${username}`
 
   useEffect(() => {
-    // Generate QR code using reliable QR API with high contrast formatting
+    // Generate high-resolution, perfectly-sized 200x200 QR matrix image
     const encodedUrl = encodeURIComponent(portfolioUrl)
-    const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodedUrl}&color=020617&bgcolor=ffffff&margin=1`
+    const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodedUrl}&color=020617&bgcolor=ffffff&margin=0`
     setQrSvg(qrImageUrl)
   }, [portfolioUrl])
 
@@ -68,20 +68,19 @@ export default function PortfolioQRModal({ username, displayName }: PortfolioQRM
 
       {/* Unique Portfolio QR Code Modal Overlay */}
       {isOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-xl animate-in fade-in duration-200">
           <div 
             className="
-              relative w-full max-w-sm rounded-3xl p-6
+              relative w-full max-w-sm max-h-[90vh] overflow-y-auto rounded-3xl p-5 sm:p-6
               border border-cyan-500/30 bg-[#07071e] text-white
-              shadow-[0_0_80px_rgba(0,0,0,0.9)]
-              flex flex-col items-center text-center space-y-4
-              overflow-hidden
+              shadow-[0_0_80px_rgba(34,211,238,0.2)]
+              flex flex-col items-center text-center space-y-3.5
             "
           >
             {/* Close Button */}
             <button
               onClick={() => setIsOpen(false)}
-              className="absolute top-4 right-4 p-1.5 rounded-xl text-zinc-400 hover:text-white hover:bg-white/10 transition-colors"
+              className="absolute top-3.5 right-3.5 p-1.5 rounded-xl text-zinc-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
             >
               <X size={18} />
             </button>
@@ -100,21 +99,21 @@ export default function PortfolioQRModal({ username, displayName }: PortfolioQRM
               </p>
             </div>
 
-            {/* High Contrast Clean QR Card */}
-            <div className="p-3.5 rounded-2xl bg-white shadow-2xl border border-white/20 flex flex-col items-center">
+            {/* Perfectly Fitting High Contrast QR Frame */}
+            <div className="p-3 rounded-2xl bg-white shadow-2xl border border-white/20 flex flex-col items-center shrink-0">
               {qrSvg ? (
                 <img
                   src={qrSvg}
                   alt={`QR Code for ${username}'s Portflix Showcase`}
-                  className="w-48 h-48 object-contain rounded"
+                  className="w-40 h-40 object-contain rounded"
                 />
               ) : (
-                <div className="w-48 h-48 flex items-center justify-center text-slate-800 font-mono text-xs">
+                <div className="w-40 h-40 flex items-center justify-center text-slate-800 font-mono text-xs">
                   Generating Pass...
                 </div>
               )}
               <div className="mt-2 text-[9px] font-mono font-bold text-slate-900 tracking-widest uppercase">
-                PORTFLIX // UNIQUE SHOWCASE PASS
+                PORTFLIX SHOWCASE PASS
               </div>
             </div>
 
@@ -130,8 +129,8 @@ export default function PortfolioQRModal({ username, displayName }: PortfolioQRM
               </button>
             </div>
 
-            {/* Actions */}
-            <div className="w-full flex items-center justify-center gap-2.5 pt-1">
+            {/* Action Buttons */}
+            <div className="w-full flex items-center justify-center gap-2 pt-1">
               <button
                 onClick={handleDownloadQR}
                 className="

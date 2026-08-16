@@ -18,7 +18,7 @@
 
 ---
 
-## ⚡ Overview
+##  Overview
 
 **Portflix** is an enterprise-grade full-stack platform engineered for modern software developers. Instead of spending hours manually crafting static personal websites, Portflix connects securely to your **GitHub account via OAuth**, fetches your active repositories, and utilizes **Curator AI (powered by Google Gemini 1.5 Flash)** to analyze README files, extract programming tech stacks, and write compelling project summaries.
 
@@ -26,14 +26,14 @@ Developers can choose from **5 specialized role templates**, monitor **real-time
 
 ---
 
-## 🔥 Key Features
+##  Key Features
 
-### 🤖 1. Curator AI Repository Curation & OAuth Integration
+###  1. Curator AI Repository Curation & OAuth Integration
 - **Selective Repo Manager**: Choose which GitHub repositories to showcase or remove.
 - **AI-Powered Code & README Summarizer**: Curator AI reads raw README snippets and extracts technologies, primary languages, and architecture summaries.
 - **OAuth Expiry Detection**: Automated detection for expired GitHub OAuth access tokens with 1-click reconnect prompts.
 
-### 🎨 2. 5 Role-Based Portfolio Templates (`/{username}`)
+###  2. 5 Role-Based Portfolio Templates (`/{username}`)
 - **Fullstack Developer**: Dark terminal-inspired bento grid with neon accents.
 - **Backend Developer**: Deep matrix green engineering layout highlighting APIs, system design, and database schemas.
 - **Frontend Developer**: Vibrant gradient canvas with smooth micro-animations.
@@ -41,31 +41,31 @@ Developers can choose from **5 specialized role templates**, monitor **real-time
 - **Other Roles**: Clean, minimal, high-contrast engineering portfolio.
 - **Instant Template Switching**: Switch templates with 1 click without losing your custom data.
 
-### 📊 3. Real-Time Telemetry & Recruiter Analytics (`/analytics`)
+###  3. Real-Time Telemetry & Recruiter Analytics (`/analytics`)
 - **Live Database Telemetry**: Computes total portfolio views, recruiter click-through rates, top engaged projects, and average time on page directly from PostgreSQL.
 - **Showcase Health Score**: Evaluates profile completion, avatar assignment, linked socials, and tech stacks.
 - **Geographic Recruiter Signals**: Real-time signal feed displaying recruiter activity and location data.
 
-### 💼 4. Direct Recruiter Inquiry & Contact Channel
+###  4. Direct Recruiter Inquiry & Contact Channel
 - **Floating `Hire Candidate` Drawer**: Recruiters can send interview invitations, job descriptions, or freelance offers directly from the candidate's public portfolio.
 - **SMTP Email Delivery**: Integrated email pipeline delivering messages straight to the developer's personal inbox.
 
-### 📱 5. Unique Portfolio QR Pass & Universal Live Preview
+###  5. Unique Portfolio QR Pass & Universal Live Preview
 - **Mobile QR Pass**: Generates a high-definition, unique matrix QR Code for every candidate. Scanning it on any mobile device or tablet instantly launches the live showcase.
 - **Universal Live Preview ↗**: Persistent topbar launcher linking to `http://localhost:3000/YOUR_USERNAME`.
 
-### 💬 6. Curator AI Assistant Chatbot
+###  6. Curator AI Assistant Chatbot
 - **Interactive System Companion**: Intelligent AI assistant built into the dashboard floating widget.
 - **Multi-Model Provider Fallback**: Cascades between `Google Gemini 1.5/2.0 Flash` and `Groq Llama 3.1` to ensure zero downtime.
 - **Full System Knowledge**: Answers workflow questions, guides users through template selection, and provides career advice.
 
-### 🌗 7. Global Studio Theme Engine & 3D AI Avatars
+###  7. Global Studio Theme Engine & 3D AI Avatars
 - **System-Wide Light / Dark Mode**: Custom theme provider with curated slate color palettes and contrast tokens.
 - **3D AI Avatar Curation**: Generates custom professional avatars with overwriting protection overlays.
 
 ---
 
-## 🛠️ Technology Stack
+##  Technology Stack
 
 | Layer | Technology |
 |---|---|
@@ -79,7 +79,7 @@ Developers can choose from **5 specialized role templates**, monitor **real-time
 
 ---
 
-## 📂 Project Architecture
+##  Project Architecture
 
 ```
 portflix/
@@ -112,7 +112,7 @@ portflix/
 
 ---
 
-## 🚀 Local Installation & Setup
+##  Local Installation & Setup
 
 ### Prerequisites
 - Node.js 18+ or Node.js 20+
@@ -165,7 +165,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
-## 🛡️ Security & Privacy
+##  Security & Privacy
 
 - **Encrypted Token Storage**: GitHub OAuth access tokens are encrypted using **AES-256-CBC** prior to database persistence.
 - **Serverless API Scoping**: All AI API keys and DB mutations execute server-side within Next.js API routes, keeping credentials isolated from client bundles.
@@ -173,7 +173,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
-## 🤝 Contributing
+##  Contributing
 
 Contributions, issues, and feature requests are welcome! Feel free to check out the [issues page](https://github.com/ApekshaPatil24/Portflix/issues).
 

@@ -22,7 +22,11 @@ export default function DashboardShell({
           className="absolute inset-0 -z-20 bg-[linear-gradient(rgba(255,255,255,0.008)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.008)_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none" 
         />
 
-        <Sidebar />
+        {/* Desktop Sidebar */}
+        <div className="hidden md:flex">
+          <Sidebar />
+        </div>
+
 
         <div className="relative flex flex-1 flex-col overflow-y-auto">
           <Topbar />

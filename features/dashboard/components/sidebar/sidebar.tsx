@@ -25,9 +25,9 @@ export default function Sidebar({ onCloseMobile }: SidebarProps) {
         flex flex-col
         relative
         z-20
-        hidden md:flex
       "
     >
+
       {/* Decorative vertical light strip */}
       <div className="absolute right-0 top-0 w-[1px] h-full bg-gradient-to-b from-transparent via-cyan-500/20 to-transparent" />
 

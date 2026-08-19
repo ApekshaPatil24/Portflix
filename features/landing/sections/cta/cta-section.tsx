@@ -176,77 +176,63 @@ export default function CtaSection() {
           <div
             className="
               mt-7
-
               flex
               flex-wrap
               items-center
               justify-center
-
               gap-3
             "
           >
-            <button
+            <a
+              href="/onboarding"
               className="
                 rounded-2xl
-
                 border
                 border-cyan-400/20
-
                 bg-gradient-to-r
                 from-cyan-400
                 to-violet-500
-
                 px-7
                 py-3.5
-
                 text-[14px]
                 font-bold
-
                 text-white
-
                 shadow-[0_10px_40px_rgba(124,58,237,0.35)]
-
                 transition-all
                 duration-300
-
                 hover:-translate-y-1
+                cursor-pointer
               "
               style={{
-                fontFamily:
-                  "var(--font-display)",
+                fontFamily: "var(--font-display)",
               }}
             >
               Start Building — Free
-            </button>
+            </a>
 
-            <button
+            <a
+              href="/templates"
               className="
                 rounded-2xl
-
                 border
                 border-white/[0.08]
-
                 bg-white/[0.03]
-
                 px-7
                 py-3.5
-
                 text-[14px]
                 font-semibold
-
                 text-white/80
-
                 backdrop-blur-xl
-
                 transition-all
                 duration-300
-
                 hover:bg-white/[0.05]
+                cursor-pointer
               "
             >
-              See live portfolios →
-            </button>
+              See live templates →
+            </a>
           </div>
+
 
           {/* NOTES */}
           <div

@@ -7,11 +7,11 @@ const links = [
 
 export default function NavLinks() {
   return (
-    <div className="relative z-10 flex gap-7">
+    <div className="relative z-10 hidden md:flex gap-7">
       {links.map((link) => (
         <a
           key={link}
-          href="#"
+          href={`#${link.toLowerCase()}`}
           className="
             text-[13px]
             font-medium
@@ -25,4 +25,4 @@ export default function NavLinks() {
       ))}
     </div>
   )
-}
+}

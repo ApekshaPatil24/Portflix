@@ -3,6 +3,7 @@ import FeatureGrid from "./feature-grid"
 export default function FeaturesSection() {
   return (
     <section
+      id="features"
       className="
         relative
         z-10
@@ -10,6 +11,7 @@ export default function FeaturesSection() {
         py-24
       "
     >
+
       {/* TOP GRADIENT */}
       <div
         className="

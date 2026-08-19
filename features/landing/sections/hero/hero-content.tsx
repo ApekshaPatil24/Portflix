@@ -30,45 +30,41 @@ export default function HeroContent() {
       {/* Heading */}
       <h1
         className="
-        whitespace-nowrap
-        text-[clamp(52px,7vw,86px)]
-          leading-[1.02]
-          tracking-[-3px]
+          text-[clamp(36px,7vw,86px)]
+          leading-[1.05]
+          tracking-[-2px] md:tracking-[-3px]
           font-black
           mb-2
           fade-up
         "
         style={{
-          fontFamily:
-            "var(--font-display)",
+          fontFamily: "var(--font-display)",
         }}
       >
         Build your
       </h1>
 
       <div
-  className="
-    whitespace-nowrap
-     text-[clamp(52px,7vw,76px)]
-    leading-[1.02]
-    tracking-[-3px]
-    font-black
-    mb-7
-    bg-gradient-to-r
-    from-cyan-400
-    via-violet-400
-    to-pink-400
-    bg-clip-text
-    text-transparent
-    fade-up
-  "
-  style={{
-    fontFamily:
-      "var(--font-display)",
-  }}
->
-  Developer Identity.
-</div>
+        className="
+          text-[clamp(36px,7vw,76px)]
+          leading-[1.05]
+          tracking-[-2px] md:tracking-[-3px]
+          font-black
+          mb-7
+          bg-gradient-to-r
+          from-cyan-400
+          via-violet-400
+          to-pink-400
+          bg-clip-text
+          text-transparent
+          fade-up
+        "
+        style={{
+          fontFamily: "var(--font-display)",
+        }}
+      >
+        Developer Identity.
+      </div>
 
       {/* Description */}
       <p
@@ -76,15 +72,16 @@ export default function HeroContent() {
           max-w-[720px]
           mx-auto
           text-zinc-400
-          text-[18px]
-          leading-[1.7]
-          mb-14
+          text-sm md:text-[18px]
+          leading-[1.6] md:leading-[1.7]
+          mb-10 md:mb-14
           fade-up
         "
       >
-        Auto-sync GitHub. Generate AI resumes tailored to JDs.
-        Let your story find the right recruiter — all on autopilot.
+        Auto-sync GitHub. Generate AI portfolios and summaries tailored for recruiters.
+        Let your story find the right opportunity — all on autopilot.
       </p>
+
 
       
     </div>

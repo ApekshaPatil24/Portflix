@@ -3,6 +3,7 @@ import RecruiterCard from "./recruiter-card"
 export default function RecruiterSection() {
   return (
     <section
+      id="about"
       className="
         relative
         z-10
@@ -11,6 +12,7 @@ export default function RecruiterSection() {
         py-28
       "
     >
+
       <div
         className="
           grid
